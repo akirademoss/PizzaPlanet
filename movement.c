@@ -72,7 +72,7 @@ void auto_reroute(oi_t *sensor, int centimeters){
             oi_update(sensor);
             sum += sensor->distance;
 
-            if(sensor->bumpLeft == 1 && ((sensor->cliffFrontLeftSignal) > (sensor->cliffLeftSignal)))
+            if(sensor->bumpLeft == 1)
             {
                 move(sensor,-5,250);
                 turn(sensor,-90);
@@ -82,17 +82,7 @@ void auto_reroute(oi_t *sensor, int centimeters){
                 lcd_printf(msg);
             }
 
-            else if(sensor->bumpLeft == 1 && ((sensor->cliffLeftSignal) > (sensor->cliffFrontLeftSignal)))
-            {
-                move(sensor,-5,250);
-                turn(sensor,-45);
-                x = (sum/10);
-                sum = abs(milimeters);
-                sprintf(msg, "centimeters traveled before Left BUMP\n%d", x);
-                lcd_printf(msg);
-            }
-
-            else if(sensor->bumpRight == 1 && ((sensor->cliffFrontRightSignal) > (sensor->cliffRightSignal)))
+            else if(sensor->bumpRight == 1)
             {
                 move(sensor,-5,250);
                 turn(sensor,90);
@@ -101,17 +91,6 @@ void auto_reroute(oi_t *sensor, int centimeters){
                 sprintf(msg, "centimeters traveled before Front Right BUMP\n%d", x);
                 lcd_printf(msg);
             }
-
-            else if(sensor->bumpRight == 1 && ((sensor->cliffRightSignal) > (sensor->cliffFrontRightSignal)))
-            {
-                move(sensor,-5,250);
-                turn(sensor,45);
-                x = (sum/10);
-                sum = abs(milimeters);
-                sprintf(msg, "centimeters traveled before Right BUMP\n%d", x);
-                lcd_printf(msg);
-            }
-
 
 
             //The values in the following group indicate CRATERs
