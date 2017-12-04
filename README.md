@@ -1,4 +1,4 @@
 "# PizzaPlanet" 
 
 ![Settings Window]
-(https://raw.github.com/akirademoss/master/PizzaPlanet/planet.png)
+https://github.com/akirademoss/PizzaPlanet/blob/master/planet.png?raw=true
