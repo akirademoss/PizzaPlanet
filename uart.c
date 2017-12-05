@@ -9,9 +9,9 @@
 //30923764.5 0x1D7DBF4
 //prelab 2: 8 & 44
 
-#include "timer.h"
-#include "lcd.h"
-#include "uart.h"
+#include <timer.h>
+#include <lcd.h>
+#include <uart.h>
 
 void UART_init(void)
 {
@@ -49,51 +49,13 @@ void UART_init(void)
 
 
 //Blocking call to receive over uart1
-//returns char with data
-int last = 0;
 char uart_receive(void)
 {
     char data = 0;
     //wait to receive
-    while (UART1_FR_R & UART_FR_RXFE)
-    {
-        int button = button_getButton();
-        if(button != last){
-            last = button;
-            switch (button)
-            {
-            case 1:
-                send_string("Y7777777es\n");
-                lcd_printf("Y7777777es");
-                break;
-            case 2:
-                send_string("sdfsdfdsf\n");
-                lcd_printf("sdfsdfdsf");
-                break;
-            case 3:
-                send_string("888\n");
-                lcd_printf("888");
-                break;
-            case 4:
-                send_string("Blue, no green, Ahhhhh!!!\n");
-                lcd_printf("Blue, no green, Ahhhhh!!!");
-                break;
-
-            case 5:
-                send_string("No\n");
-                lcd_printf("No");
-                break;
-            case 6:
-                send_string("Yes\n");
-                lcd_printf("Yes");
-                break;
-            }
-        }
-
-    }
+    while (UART1_FR_R & UART_FR_RXFE);
     //mask the 4 error bits and grab only 8 data bits
     data = (char) (UART1_DR_R & 0xFF);
-
     return data;
 }
 
@@ -108,9 +70,7 @@ void send_string(char str[]){
 void uart_sendChar(char data)
 {
     //wait until there is room to send data
-    while (UART1_FR_R & 0x20)
-    {
-    }
+    while (UART1_FR_R & 0x20);
     //send data
     UART1_DR_R = data;
 }
