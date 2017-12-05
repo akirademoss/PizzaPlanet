@@ -11,9 +11,12 @@
 
 
 
-/*
+/**
  * Simple movement function (+N) is forward motion (-N) is backward motion
  * Note that the CyBot will turn (+ or -)90 degrees if a Front sensor is detected
+ * @param sensor
+ * @param centimeters
+ * @param velocity_mag
  */
 void move(oi_t *sensor, int centimeters, int velocity_mag)
 {
@@ -29,6 +32,8 @@ void move(oi_t *sensor, int centimeters, int velocity_mag)
 
 /*
  * Simple turn function (+N) is counter-clockwise (-N) is clockwise
+ * @param sensor
+ * @param degrees
  */
 void turn(oi_t *sensor, int degrees)
 {
@@ -51,6 +56,8 @@ void turn(oi_t *sensor, int degrees)
  * e.g. "collision_avoidance(sensor, N);" --> if N = 15 moves forward 15cm.  if N = -15 moves backward 15cm
  * Integrated CRATER avoidance and WHITE LINE avoidance
  * When hits a CRATER or WHITE LINE moves backward 5cm and turns + or - 90 degrees
+ * @param sensor
+ * @param centimeters
  *
  */
 
