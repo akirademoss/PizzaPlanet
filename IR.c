@@ -81,7 +81,8 @@ float ir_getDistance(void){
         adc_init();
 
         digital_v = ADC_read(10);
-        distance = 4570.56*pow(digital_v, -0.8263013);
+        //distance = 4570.56*pow(digital_v, -0.8263013); // Cybot 2
+        distance = 91459*pow(digital_v, -1.139); // Cybot 8
         lcd_printf("digital_v %d  (V)\n distance %d (cm)",digital_v,distance);
         return distance;
 }

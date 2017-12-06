@@ -1,10 +1,5 @@
 /**
  * lcd.c: Functions for displaying content on the 4x16 Character LCD Screen
- *
- *  @author Noah Bergman, Eric Middleton
- *  @date 02/29/2016
- *
- *
  */
 
 

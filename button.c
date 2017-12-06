@@ -1,8 +1,6 @@
 /*
  * button.c
  *
- *  Created on: Jul 18, 2016
- *      Author: Eric Middleton, Zhao Zhang, Chad Nelson, & Zachary Glanz.
  */
 
 //The buttons are on PORTE 0:5

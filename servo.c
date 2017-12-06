@@ -61,14 +61,10 @@ void motor_init(){
  *
  */
 unsigned move_servo(unsigned degree){
-    unsigned pulse_width; // pulse width in cycles
-    pulse_width = 155.56*degree+7500;
-    unsigned period_width = 320000;
-
-    TIMER1_TBMATCHR_R = (period_width - pulse_width); // set pulse width
-
-    timer_waitMillis(servo_wait);
-    return pulse_width;
+    int counter = (double)(degree+50.20922)/0.006172; // cybot 8
+    TIMER1_TBMATCHR_R = (0x4E200 - counter) & 0xFFFF;
+    TIMER1_TBPMR_R = (0x4E200 - counter) >> 16;
+    return counter;
 }
 
 /// Initializes the servo components

@@ -48,14 +48,20 @@ main(void)
     servo_init();
     ping_init();
 
+    /* ir calibration
+    while(1){
+        timer_waitMillis(100);
+        ir_getDistance();
+    }
+    */
 
     //auto_reroute(sensor, 50);
 
     //NOTE - uncomment this to test scanner
-    //while(1){
-    //timer_waitMillis(1000);
-    //scan_action();
-    //}
+    while(1){
+        //timer_waitMillis(1000);
+        scan_action();
+    }
 
     //Ann Devin Code
     char buffer[21];

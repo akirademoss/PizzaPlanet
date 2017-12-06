@@ -1,8 +1,6 @@
 /*
  * button.h
  *
- *  Created on: Jul 18, 2016
- *      Author: Eric Middleton
  */
 
 #ifndef BUTTON_H_

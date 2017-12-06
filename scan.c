@@ -131,7 +131,7 @@ void scan_action(){
         // Increments servo by a degree
         scan_degrees = scan_degrees + 2;
         move_servo(scan_degrees);
-        timer_waitMillis(100);
+        //timer_waitMillis(100);
     }
 
     move_servo(90);
