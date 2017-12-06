@@ -64,7 +64,7 @@ void turn(oi_t *sensor, int degrees)
 void auto_reroute(oi_t *sensor, int centimeters){
      //include lcd_init() for print testing
      lcd_init();
-     oi_setWheels((centimeters > 0) ? 300 : -298.5, (centimeters > 0) ? 300 : -298.5);
+     oi_setWheels((centimeters > 0) ? 324 : -298.5, (centimeters > 0) ? 350 : -298.5);
      char msg[81] = "";
      int sum = 0;
 
