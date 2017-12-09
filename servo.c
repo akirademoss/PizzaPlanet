@@ -1,84 +1,60 @@
-/*
- * servo.c
- *
- *  Created on: Dec 5, 2017
- *      Author: demoss
- */
-
-#include <servo.h>
-
-#include <timer.h>
-#include <lcd.h>
-#include <button.h>
-#include <Wifi.h>
-#include <uart.h>
-#include <math.h>
-#include <driverlib/interrupt.h>
-
-
-/// Time servo will wait between movements
-uint32_t servo_wait = 50; // wait time in ms
-
-
-/// Initialize the timers
 /**
+ * @file servo.c
+ * @brief File containing functions for controlling the servo motor
  *
+ * @authors 	Ann Gould, Akira DeMoss, Devin Uner, Takao Shibamoto
+ * @date    	Dec 7, 2017
  */
-void timer1B_init(void) {
 
-    unsigned pulse_period = 320000;
-    unsigned mid_width = 0;
+#include "button.h"
+#include "timer.h"
+#include "lcd.h"
+#include "servo.h"
 
-    SYSCTL_RCGCTIMER_R |= SYSCTL_RCGCTIMER_R1; // Turn on clock to TIMER1B
-    TIMER1_CTL_R &= ~TIMER_CTL_TBEN; //disable TIMER1B
-    TIMER1_CFG_R |= TIMER_CFG_16_BIT; //set to 16bit
-    TIMER1_TBMR_R |= TIMER_TBMR_TBMR_PERIOD|TIMER_TBMR_TBAMS; //set to periodic and alternate mode
-    TIMER1_TBPR_R = (pulse_period >> 16) & 0xFF; //set timer prescaler
-    TIMER1_TBILR_R = pulse_period & 0xFFFF; //set period
-    TIMER1_TBPMR_R = (296000 >> 16) & 0xFF; // set match prescaler
-    TIMER1_TBMATCHR_R = (pulse_period - mid_width) & 0xFFFF; // set timer value for initial intpt
 
-    // enable timer1b
-    TIMER1_CTL_R |= TIMER_CTL_TBEN;
+unsigned pulse_period=320000;
+
+///This function initializes the motor and timers
+/**
+ * Initialize GPIO PORT B, configure pin 6 for digital enable, 
+ * configure alternative function through AFSEL and PCTL [Table 2.6],
+ * configures appropriate timers
+ */
+void servo_init(){
+    SYSCTL_RCGCGPIO_R|=0x02;
+
+    GPIO_PORTB_DEN_R|=0b00100000;
+    GPIO_PORTB_DIR_R|=0x20;
+    GPIO_PORTB_AFSEL_R|=0x20;
+    GPIO_PORTB_PCTL_R|=0x00700000;
+
+    SYSCTL_RCGCTIMER_R|=0x02;
+    TIMER1_CTL_R&=0xFFFFFEFF;
+    TIMER1_TBMR_R|=0x0A;
+    TIMER1_CFG_R|=TIMER_CFG_16_BIT;
+    TIMER1_TBILR_R=pulse_period & 0xFFFF;
+    TIMER1_TBPR_R=pulse_period>>16;
+    TIMER1_TBMATCHR_R=(pulse_period-24000)&0xFFFF;
+    TIMER1_TBPMR_R=(pulse_period-24000)>>16;
+    TIMER1_CTL_R|=(0x0100);
 }
 
-/// Initialize the servo motor
 /**
- *
+ * Moves servo to a specified degree between 0 and 180 degrees.
+ * @param deg 
  */
-void motor_init(){
-    SYSCTL_RCGCGPIO_R |= 0x2;
-
-    GPIO_PORTB_AFSEL_R |= BIT5;
-    GPIO_PORTB_DEN_R |= BIT5;
-    GPIO_PORTB_DIR_R |= BIT5;
-
-    GPIO_PORTB_PCTL_R |= 0x700000;
-}
-
-/// Moves servo to a specified degree between 0 and 180 degrees.
-/**
- *
- */
-unsigned move_servo(unsigned degree){
-    unsigned pulse_width; // pulse width in cycles
-    pulse_width = 155.56*degree+7500;
-    unsigned period_width = 320000;
-
-    TIMER1_TBMATCHR_R = (period_width - pulse_width); // set pulse width
-
-    timer_waitMillis(servo_wait);
-    return pulse_width;
-}
-
-/// Initializes the servo components
-/**
- *
- */
-void servo_init(void) {
-    motor_init();
-    button_init();
-    timer1B_init();
+void servo_t(unsigned deg){
+    unsigned pulse_width;
+    int matchr;
+    float sum;
+    float degs;
+    degs=((double)deg)/180;
+    sum= 1+degs;
+    ///Cybot 5
+    pulse_width=((deg*.0000095)+.000645)*16000000;
+    matchr=pulse_period-pulse_width;
+    TIMER1_TBMATCHR_R=matchr;
+    TIMER1_TBPMR_R=matchr>>16;
 }
 
 

@@ -1,8 +1,9 @@
-/*
- * Timer.hpp
+/**
+ * @file Timer.h
+ * @brief File containing functions for a timer
  *
- *  Created on: Mar 3, 2016
- *      Author: ericm
+ * @authors 	Ann Gould, Akira DeMoss, Devin Uner, Takao Shibamoto
+ * @date    	Dec 7, 2017
  */
 
 #ifndef TIMER_H_
@@ -10,14 +11,14 @@
 
 #include <stdint.h>
 
-#define BIT0        0x01
-#define BIT1        0x02
-#define BIT2        0x04
-#define BIT3        0x08
-#define BIT4        0x10
-#define BIT5        0x20
-#define BIT6        0x40
-#define BIT7        0x80
+#define BIT0		0x01
+#define BIT1		0x02
+#define BIT2		0x04
+#define BIT3		0x08
+#define BIT4		0x10
+#define BIT5		0x20
+#define BIT6		0x40
+#define BIT7		0x80
 
 typedef uint32_t clock_t;
 
@@ -26,6 +27,11 @@ typedef uint32_t clock_t;
 
 extern volatile uint32_t _timer_ticks;
 
+/**
+ *
+ * Pauses program for specified time
+ * @param millis   Time to pause the program in milliseconds
+ */
 void timer_waitMillis(uint32_t millis);
 
 void timer_waitMicros(uint16_t micros);

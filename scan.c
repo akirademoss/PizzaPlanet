@@ -1,20 +1,22 @@
-/*
- * scan.c
+/**
+ * @file scan.c
+ * @brief File containing functions for controlling object detection with IR sensor and Ping
  *
- *  Created on: Dec 5, 2017
- *      Author: demoss
+ * @authors 	Ann Gould, Akira DeMoss, Devin Uner, Takao Shibamoto
+ * @date    	Dec 7, 2017
  */
 
 #include <scan.h>
 #include <math.h>
-#include <IR.h>
-#include <ping.h>
-#include <servo.h>
 #include <Timer.h>
-#include <button.h>
+#include <servo.h>
+#include <adc_init.h>
+#include <sonar.h>
 #include <uart.h>
-#include <WiFi.h>
 #include <stdbool.h>
+#include <math.h>
+
+#define PI 3.14159265
 
 int16_t scan_degrees = 0;
 int8_t obj_count = 0;
@@ -34,8 +36,8 @@ _Bool end_case = false;
 
 /// Resets all the global variables.
 /**
- *      Resets all the global variables for a new scan. This allows for each scan to produce fresh results
- *      that are not affected by previous scans.
+ * Resets all the global variables for a new scan. This allows for each scan to produce fresh results
+ * that are not affected by previous scans.
  *
  */
 void scan_reset(){
@@ -54,87 +56,77 @@ void scan_reset(){
     edge_count = 0;
     end_case = false;
 
-    // Sets servo back to reset zero, waits to prevent false readings
-    move_servo(0);
+    /// Sets servo back to reset zero, waits to prevent false readings
+    servo_t(0);
     timer_waitMillis(250);
 }
 
 /// Scans from 0 degrees to 180 degrees and returns over UART objects detected and their approximate location.
 /**
- *      Scans from 0 degrees to 180 degrees and returns over UART objects detected and their approximate location.
- *      Sends back data in following format, space delimited:
- *              ['S'][deg_start][deg_end][distance]
- *
+ * Scans 180 degree arc and marks detected objects
  */
 void scan_action(){
     scan_reset();
+    int degrees = 0;
+      int store_degrees = 0; ///stores degrees before an object is being detected :)
+      int objects[15];
+      int real = 0;
+      int f_location[15];
+      int b_location[15];
+      int num_value = 0;
+      int on_object = 0;
 
-    while(scan_degrees < 180){
-        float ir_dist = ir_getDistance();
-        float ping_dist = ping_read();
+          while(degrees < 170){
+               int avg = ir_stuff();
 
+               int ping_distance = ping_read();
+                  if( avg < 50){
+                      real++;
+                      if(on_object == 0 && real >= 3 ) {
+                          store_degrees = degrees;
+                          f_location[num_value] = degrees;
+                          on_object = 1;
+                      }
+                  }
+                  else if(on_object == 1 && ping_distance < 60){ ///added this to not send back things super far away
+                      objects[num_value] = degrees - store_degrees;
+                      b_location[num_value] = degrees;
+                      lcd_printf("%d", ping_read());
 
-        // Used to prevent false positives in detecting edge ends
-        if((ir_dist > 80 || ping_dist > 90) && obj_detection && !end_case) {
-            temp_deg_end = scan_degrees;
-            edge_count++;
-            end_case = true;
-        } else if((ir_dist > 80 || ping_dist > 90) && obj_detection && end_case) {
-            edge_count++;
-        }
+                      /// send distance back
+                      char my_str[300];
+                      object_width = ping_distance * atan(((degrees - store_degrees)/ 360.0) * PI);
+                      sprintf(my_str, "{\"class\": 2,\"distance\": %d, \"width\": %f, \"start_angle\": %d, \"end_angle\": %d}\n", ping_distance, object_width, store_degrees, degrees);
+                      send_string(my_str);
 
-        // calls when a new object is spotted
-        if ( (ir_dist <= 80) && ping_dist <= 90 && !obj_detection) {
-            obj_detection = true;
-            deg_start = scan_degrees;
-            deg_end = 0;
-            obj_count++;
-            distance_avg = 0;
+                      num_value++;
+                      on_object = 0;
+                      real = 0;
+                  }
+                  else{
+                      real = 0;
+                  }
+              servo_t(degrees);
+              timer_waitMillis(30);
+              degrees += 1;
+          }
+          int i;
+          int max = objects[0];
+          int max_index = 0;
+          int min_index = 0;
+          int min = objects[0];
+          for(i=0; i < num_value; i++){
+              if(objects[i] > max){
+                  max = objects[i];
+                  max_index = i;
+              }
 
-            sprintf(buffer, "Object Spotted\r\n");
-            send_string(buffer);
-
-        }
-
-        // calls when an object is lost in sight
-        else if ( (ir_dist > 80 || ping_dist > 90) && obj_detection && edge_count > 1) {
-            obj_detection = false;
-            deg_end = temp_deg_end;
-            deg_width = abs(deg_end - deg_start); // calculate object width in degrees
-
-            object_width = ( distance_avg * sin((deg_width) * (PI/180) ) ) / ( sin(( (180-deg_width)/2) * (PI/180) ) );
-
-            if(object_width < smallest_obj_width){
-                smallest_obj_width = object_width;
-                deg_smallest_obj = deg_start;
-            }
-
-            // Transmit data over UART
-            int dist_send = (int) distance_avg;
-
-            sprintf(buffer, "S %d %d %d\r\n", deg_start, deg_end,dist_send);
-            send_string(buffer);
-
-            // Reset error protection
-            distance_count = distance_total = 0;
-            edge_count = 0;
-            end_case = false;
-        }
-
-        // Calculates running average of the distance from sensor to object
-        if(obj_detection){
-            distance_count++;
-            distance_total += ping_dist;
-            distance_avg = distance_total / distance_count;
-        }
-
-        // Increments servo by a degree
-        scan_degrees = scan_degrees + 2;
-        move_servo(scan_degrees);
-        timer_waitMillis(100);
-    }
-
-    move_servo(90);
+              if(objects[i] < min){
+                  min = objects[i];
+                  min_index = i;
+              }
+          }
+          servo_t(b_location[min_index] - (objects[min_index]));
+          lcd_printf("%d", min_index);
 }
-
 

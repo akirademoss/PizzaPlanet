@@ -1,22 +1,24 @@
-/*
- * movement.c
+/**
+ * @file movement.c
+ * @brief Commands for moving the CyBot
  *
- *  Created on: Sep 7, 2017
- *      Author: demoss
+ * @authors 	Ann Gould, Akira DeMoss, Devin Uner, Takao Shibamoto
+ * @date    	Dec 7, 2017
  */
 
 #include "movement.h"
 #include "lcd.h"
 #include "Timer.h"
-
+#include "uart.h"
+#include "string.h"
 
 
 /**
  * Simple movement function (+N) is forward motion (-N) is backward motion
- * Note that the CyBot will turn (+ or -)90 degrees if a Front sensor is detected
- * @param sensor
- * @param centimeters
- * @param velocity_mag
+ *
+ * @param sensor        Allocates the bot's sensor data
+ * @param centimeters   Distance to move the bot in centimeters
+ * @param velocity_mag  Magnitude of velocity for the bot to travel
  */
 void move(oi_t *sensor, int centimeters, int velocity_mag)
 {
@@ -30,48 +32,44 @@ void move(oi_t *sensor, int centimeters, int velocity_mag)
         oi_setWheels(0, 0); // stop
 }
 
-/*
+/**
  * Simple turn function (+N) is counter-clockwise (-N) is clockwise
- * @param sensor
- * @param degrees
+ *
+ * @param sensor	 Allocates the bot's sensor data
+ * @param degrees	 Amount to turn the bot in degrees
  */
 void turn(oi_t *sensor, int degrees)
 {
     lcd_init();
-   // char msg[81] = "";
+    /// char msg[81] = "";
     oi_setWheels((degrees > 0) ? 100 : -100, (degrees > 0) ? -100 : 100);
     int sum = 0;
     while(abs(sum)<abs(degrees))
     {
         oi_update(sensor);
         sum += sensor->angle;
-        //sprintf(msg, "Angle turned:\n%d", sum);
-       // lcd_printf(msg);
     }
     oi_setWheels(0, 0); // stop
 }
 
-/*
+/**
  * Moves the bot forward or backward N centimeter
- * e.g. "collision_avoidance(sensor, N);" --> if N = 15 moves forward 15cm.  if N = -15 moves backward 15cm
- * Integrated CRATER avoidance and WHITE LINE avoidance
- * When hits a CRATER or WHITE LINE moves backward 5cm and turns + or - 90 degrees
- * @param sensor
- * @param centimeters
+ * e.g. "collision_avoidance(sensor, N);" --> if N = 10 moves forward 15cm.  if N = -10 moves backward 10cm
+ * Integrated pothole avoidance and white boundary line avoidance
+ * When hits a pothole or white boundary line moves backward the distance traveled before it hit the object
  *
+ * @param sensor	 	Allocates the bot's sensor data
+ * @param centimeters   Distance to move the bot in centimeters
  */
 
 void auto_reroute(oi_t *sensor, int centimeters){
-     //include lcd_init() for print testing
+     ///include lcd_init() for print testing
      lcd_init();
-     oi_setWheels((centimeters > 0) ? 300 : -298.5, (centimeters > 0) ? 300 : -298.5);
-     char msg[81] = "";
+     oi_setWheels((centimeters > 0) ? 100 : -100, (centimeters > 0) ? 100 : -100);
+     char msg[81] = "none";
      int sum = 0;
 
-    //IMPORTANT: (TODO)
-    //This variable is the distance left in the forward (x) direction after the CyBot has hit a BUMP, CRATOR or WHITE LINE
-    //Note we will need this value for mapping
-
+    ///This variable is the distance left in the forward (x) direction after the CyBot has hit a bump, pothole or white boundary line
     int x = 0;
     int milimeters = centimeters*10;
         while (abs(sum)<abs(milimeters))
@@ -79,120 +77,109 @@ void auto_reroute(oi_t *sensor, int centimeters){
             oi_update(sensor);
             sum += sensor->distance;
 
+            x = (sum/10);
+
             if(sensor->bumpLeft == 1)
             {
-                move(sensor,-5,250);
-                turn(sensor,-90);
-                x = (sum/10);
+                move(sensor,x * -1,250);
                 sum = abs(milimeters);
-                sprintf(msg, "centimeters traveled before Front Left BUMP\n%d", x);
+                sprintf(msg, "{\"class\":1,\"type\": \"bump-left\", \"distance\": %d}\n", x);
+                send_string(msg);
                 lcd_printf(msg);
             }
 
             else if(sensor->bumpRight == 1)
             {
-                move(sensor,-5,250);
-                turn(sensor,90);
-                x = (sum/10);
+                move(sensor,x * -1,250);
                 sum = abs(milimeters);
-                sprintf(msg, "centimeters traveled before Front Right BUMP\n%d", x);
+                sprintf(msg, "{\"class\":1,\"type\": \"bump-right\", \"distance\": %d}\n", x);
+                send_string(msg);
                 lcd_printf(msg);
             }
 
-
-            //The values in the following group indicate CRATERs
-            //Note that the CyBot will turn (+ or -)90 degrees if a Front sensor is detected
-            //and will turn (+ or -)45 degrees if a regular (side) sensor is detected
-
-            //These values indicate CRATERs
+            ///cliff
             else if(sensor-> cliffFrontRightSignal < 800)
             {
-                move(sensor, -5, 250);
-                turn(sensor, 90);
-                x = (sum/10);
-                sprintf(msg, "centimeters traveled before CRATER on Front Right\n%d", x);
+                move(sensor, x * -1, 250);
+                sprintf(msg, "{\"class\":1,\"type\": \"cliff-right\", \"distance\": %d}\n", x);
+                send_string(msg);
                 lcd_printf(msg);
                 sum = abs(milimeters);
             }
 
             else if(sensor-> cliffRightSignal < 800)
             {
-                move(sensor, -5, 250);
-                turn(sensor, 45);
-                x = (sum/10);
-                sprintf(msg, "centimeters traveled before CRATER on Right\n%d", x);
+                move(sensor, x * -1, 250);
+                sprintf(msg, "{\"class\":1,\"type\": \"cliff-right\", \"distance\": %d}\n", x);
+                send_string(msg);
                 lcd_printf(msg);
                 sum = abs(milimeters);
             }
 
             else if(sensor-> cliffFrontLeftSignal < 800)
             {
-                move(sensor, -5, 250);
-                turn(sensor, -90);
-                x = (sum/10);
-                sprintf(msg, "centimeters traveled before CRATER on Front Left\n%d", x);
+                move(sensor, x * -1, 250);
+                sprintf(msg, "{\"class\":1,\"type\": \"cliff-left\", \"distance\": %d}\n", x);
+                send_string(msg);
                 lcd_printf(msg);
                 sum = abs(milimeters);
             }
 
             else if(sensor-> cliffLeftSignal < 800)
             {
-                move(sensor, -5, 250);
-                turn(sensor, -45);
-                x = (sum/10);
-                sprintf(msg, "centimeters traveled before CRATER on Left\n%d", x);
+                move(sensor, x * -1, 250);
+                sprintf(msg, "{\"class\":1,\"type\": \"cliff-left\", \"distance\": %d}\n", x);
+                send_string(msg);
                 lcd_printf(msg);
                 sum = abs(milimeters);
             }
 
-            //The values in the following group indicate WHITE LINEs
-
+            ///white line
             else if((sensor->cliffFrontRight) || ((sensor->cliffFrontRightSignal) > 2750))
             {
-                move(sensor, -5, 250);
-                turn(sensor, 90);
-                x = (sum/10);
+                move(sensor, x * -1, 250);
                 char msg[81] = "";
-                sprintf(msg, "centimeters traveled before WHITE LINE on Front Right\n%d", x);
+                sprintf(msg, "{\"class\":1,\"type\": \"white-line\", \"distance\": %d}\n", x);
+                send_string(msg);
                 lcd_printf(msg);
                 sum = abs(milimeters);
             }
-
 
             else if((sensor->cliffRight) || ((sensor->cliffRightSignal) > 2750))
             {
-                move(sensor, -5, 250);
-                turn(sensor, 45);
-                x = (sum/10);
+                move(sensor, x * -1, 250);
                 char msg[81] = "";
-                sprintf(msg, "centimeters traveled before WHITE LINE on Right\n%d", x);
+                sprintf(msg, "{\"class\":1,\"type\": \"white-line\", \"distance\": %d}\n", x);
+                send_string(msg);
                 lcd_printf(msg);
                 sum = abs(milimeters);
             }
 
             else if((sensor->cliffFrontLeft) || ((sensor->cliffFrontLeftSignal) > 2750)){
-                move(sensor, -5, 250);
-                turn(sensor, -90);
-                x = (sum/10);
+                move(sensor, x * -1, 250);
                 char msg[81] = "";
-                sprintf(msg, "centimeters traveled before WHITE LINE on Front Left\n%d", x);
+                sprintf(msg, "{\"class\":1,\"type\": \"white-line\", \"distance\": %d}\n", x);
+                send_string(msg);
                 lcd_printf(msg);
                 sum = abs(milimeters);
             }
 
             else if((sensor->cliffLeft) || ((sensor->cliffLeftSignal) >2750))
             {
-                move(sensor, -5, 250);
-                turn(sensor, -45);
-                x = (sum/10);
+                move(sensor, x * -1, 250);
                 char msg[81] = "";
-                sprintf(msg, "centimeters traveled before WHITE LINE on Left\n%d", x);
+                sprintf(msg, "{\"class\":1,\"type\": \"white-line\", \"distance\": %d}\n", x);
+                send_string(msg);
                 lcd_printf(msg);
                 sum = abs(milimeters);
             }
 
         }
-        oi_setWheels(0, 0); // stop
-}
 
+        if(strcmp(msg, "none") == 0){
+            sprintf(msg, "{\"class\":0, \"type\": \"move_forward\", \"distance\": %d}\n", x);
+            send_string(msg);
+        }
+        oi_setWheels(0, 0); /// stop
+    }
 
