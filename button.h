@@ -1,8 +1,9 @@
-/*
- * button.h
+/**
+ * @file button.h
+ * @brief This file contains button functions used to incrementally test our code
  *
- *  Created on: Jul 18, 2016
- *      Author: Eric Middleton
+ * @authors 	Ann Gould, Akira DeMoss, Devin Uner, Takao Shibamoto
+ * @date    	Dec 7, 2017
  */
 
 #ifndef BUTTON_H_
@@ -12,20 +13,27 @@
 
 #include <inc/tm4c123gh6pm.h>
 
-//initialize the push buttons
+/**
+ * Initializes PORTE and configure bits 5-0 to be used as inputs.
+ */
 void button_init();
 
-//Non-blocking call
-//Returns 8-bit integer with bits 0:5 indicating if button is pressed (set)
-//   or not (cleared)
+/**
+ * returns a 6-bit bit field, representing the push buttons. A 1 means the corresponding button is pressed.
+ * @return unit8_t:   Returns the button status
+ */
 uint8_t button_checkButtons();
-
-///Non-blocking call
-///Returns highest value button being pressed, 0 if no button pressed
+ 
+/**
+ * Returns the position of the leftmost button being pushed.
+ * @return uint8_t:   The position of the leftmost button being pushed. A 6 is the leftmost button, 1 is the rightmost button.  0 indicates no button being pressed
+ */
 uint8_t button_getButton();
 
-//Blocking call
-//Returns highest value button being pressed, waits until at least one button is pressed
+/**
+ *Blocking call
+ * @return button:   Highest value button being pressed, waits until at least one button is pressed
+ */
 uint8_t button_getButtonBlocking();
 
 

@@ -1,8 +1,9 @@
-/*
- * scan.h
+/**
+ * @file scan.h
+ * @brief File containing functions for controlling object detection with IR sensor and Ping
  *
- *  Created on: Dec 5, 2017
- *      Author: demoss
+ * @authors 	Ann Gould, Akira DeMoss, Devin Uner, Takao Shibamoto
+ * @date    	Dec 7, 2017
  */
 
 #ifndef SCAN_H_
@@ -23,11 +24,18 @@ char buffer[80];
 
 
 
-// Resets all the variables for consistent scan readings
+/// Resets all the variables for consistent scan readings
+/**
+ * Resets all the variables for consistent scan readings
+ */
 void scan_reset();
 
-// Scans 180 degree arc and marks detected objects
+/// Scans from 0 degrees to 180 degrees and returns over UART objects detected and their approximate location.
+/**
+ * Scans 180 degree arc and marks detected objects
+ */
 void scan_action();
 
 
 #endif /* SCAN_H_ */
+
