@@ -6,7 +6,7 @@
 
 ![cpre 288 obstacle course](https://user-images.githubusercontent.com/8731829/37073689-181ebdcc-218e-11e8-8dc1-5d96218bbbcc.jpg)
 
-# Design Thinking Use-Case for PizzaPlanet
+# Design Thinking 
 CPRE 288 PizzaPlanet Application Story
 
 # Introduction
