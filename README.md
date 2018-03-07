@@ -8,6 +8,8 @@
 
 ![cpre 288 obstacle course](https://user-images.githubusercontent.com/8731829/37073689-181ebdcc-218e-11e8-8dc1-5d96218bbbcc.jpg)
 
+**Figure 2.**  Obstacle course we were tasked with navigating using only sensor data
+
 # Design Thinking 
 CPRE 288 PizzaPlanet Application Story
 
