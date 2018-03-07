@@ -43,4 +43,10 @@ CPRE 288 PizzaPlanet Application Story
 
 **Changes in Future:**  If we continued to work on this in the future we would make our vehicle fully autonomous, but given the time restrictions and our current skillsets we managed to leverage our strengths to achieve an equally impressive product.  
 
+#Credits 
 
+- [Takao Shibamoto](https://github.com/takao42/) 
+- [Akira Demoss](https://github.com/akirademoss
+) 
+- [Devin Uner](https://github.com/Devin-Uner) 
+- [Ann Gould](https://github.com/gould-ann) 
