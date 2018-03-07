@@ -1,5 +1,13 @@
-# PizzaPlanet
-CPRE 288 Pizza Planet Application Story
+# Hardware 
+
+![rumba robot](https://user-images.githubusercontent.com/8731829/37073615-9b3a5fe6-218d-11e8-9d3c-9dcbbbbfb134.PNG)
+
+# Obstacle Course 
+
+![cpre 288 obstacle course](https://user-images.githubusercontent.com/8731829/37073689-181ebdcc-218e-11e8-8dc1-5d96218bbbcc.jpg)
+
+# Design Thinking Use-Case for PizzaPlanet
+CPRE 288 PizzaPlanet Application Story
 
 # Introduction
 
@@ -27,10 +35,4 @@ CPRE 288 Pizza Planet Application Story
 
 **Changes in Future:**  If we continued to work on this in the future we would make our vehicle fully autonomous, but given the time restrictions and our current skillsets we managed to leverage our strengths to achieve an equally impressive product.  
 
-# Hardware 
 
-![rumba robot](https://user-images.githubusercontent.com/8731829/37073615-9b3a5fe6-218d-11e8-9d3c-9dcbbbbfb134.PNG)
-
-# Obstacle Course 
-
-![cpre 288 obstacle course](https://user-images.githubusercontent.com/8731829/37073689-181ebdcc-218e-11e8-8dc1-5d96218bbbcc.jpg)
