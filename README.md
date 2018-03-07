@@ -2,6 +2,7 @@
 
 ## Overview
 
+This repository contains the project for my Embedded Systems course.  Using labs completed over the course of the semester, we designed a plan to navigate through an obstacle course using only data obtained from the sensors.
 
 # Hardware 
 
