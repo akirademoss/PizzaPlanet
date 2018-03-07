@@ -2,6 +2,8 @@
 
 ![rumba robot](https://user-images.githubusercontent.com/8731829/37073615-9b3a5fe6-218d-11e8-9d3c-9dcbbbbfb134.PNG)
 
+**Figure 1.** CyBot is the codename for the above platform. It consists of: TI LaunchPad, ARM-based microcontroller, iRobot Create 2, Several attachments (stepper motor, servo, sonar, IR distance, LCD, etc.)
+
 # Obstacle Course 
 
 ![cpre 288 obstacle course](https://user-images.githubusercontent.com/8731829/37073689-181ebdcc-218e-11e8-8dc1-5d96218bbbcc.jpg)
