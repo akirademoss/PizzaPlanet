@@ -26,3 +26,11 @@ CPRE 288 Pizza Planet Application Story
 **Evaluation of Outcomes:**  Our solution was appropriate to accommodate our primary stakeholders.  We identified addressed the 3 most critical needs of our stakeholders, and tailored our design solution to accommodate these needs.  Given that our ideation process occurred over the course of 10 weeks and we all spent an average of 45 minutes a week on this, I would say that our ideation process was proficiently thorough and lead to a successful outcome and accomplishment of our primary objectives.
 
 **Changes in Future:**  If we continued to work on this in the future we would make our vehicle fully autonomous, but given the time restrictions and our current skillsets we managed to leverage our strengths to achieve an equally impressive product.  
+
+# Hardware 
+
+![rumba robot](https://user-images.githubusercontent.com/8731829/37073615-9b3a5fe6-218d-11e8-9d3c-9dcbbbbfb134.PNG)
+
+# Obstacle Course 
+
+![cpre 288 obstacle course](https://user-images.githubusercontent.com/8731829/37073689-181ebdcc-218e-11e8-8dc1-5d96218bbbcc.jpg)
