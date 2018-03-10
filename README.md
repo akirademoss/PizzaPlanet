@@ -46,8 +46,8 @@ CPRE 288 PizzaPlanet Application Story
 # Credits  
 
 Final Project for CprE 288: Embedded Systems (Fall 2017)
-- [Takao Shibamoto](https://github.com/takao42/) 
 - [Akira Demoss](https://github.com/akirademoss
 ) 
+- [Takao Shibamoto](https://github.com/takao42/) 
 - [Devin Uner](https://github.com/Devin-Uner) 
 - [Ann Gould](https://github.com/gould-ann) 
